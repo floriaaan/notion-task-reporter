@@ -2,6 +2,9 @@ import {
   DatePropertyItemObjectResponse,
   PageObjectResponse,
   SelectPropertyItemObjectResponse,
+  TitlePropertyItemObjectResponse,
+  PeoplePropertyItemObjectResponse,
+  UserObjectResponse,
 } from "@notionhq/client/build/src/api-endpoints";
 import { getContent, notion } from "@/lib/notion";
 import { Task } from "@/types/notion";
@@ -18,11 +21,17 @@ export const getTasks = async (database_id: string) => {
           ?.name || "Sans projet",
       date: (task.properties.Date as DatePropertyItemObjectResponse).date
         ?.start,
-      //@ts-ignore
-      title: task.properties.Name.title[0].plain_text,
-      //@ts-ignore
-      assigned: task.properties["assigné"].people
-        .map((p: { name: string }) => p.name)
+      title: (
+        task.properties.Name as unknown as TitlePropertyItemObjectResponse
+      ).title.plain_text,
+      assigned: (
+        (
+          task.properties[
+            "assigné"
+          ] as unknown as PeoplePropertyItemObjectResponse
+        ).people as unknown as UserObjectResponse[]
+      )
+        .map((p) => p.name)
         .join(", "),
 
       content: await getContent(task.id),

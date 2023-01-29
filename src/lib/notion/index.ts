@@ -1,6 +1,6 @@
+import "dotenv/config"
 import { Client as NotionClient } from "@notionhq/client";
 import { getContent } from "@/lib/notion/block";
-require("dotenv").config();
 
 let notion: NotionClient;
 type GlobalWithNotion = typeof globalThis & {
