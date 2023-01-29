@@ -5,6 +5,7 @@ import {
   TitlePropertyItemObjectResponse,
   PeoplePropertyItemObjectResponse,
   UserObjectResponse,
+  RichTextItemResponse,
 } from "@notionhq/client/build/src/api-endpoints";
 import { getContent, notion } from "@/lib/notion";
 import { Task } from "@/types/notion";
@@ -22,8 +23,9 @@ export const getTasks = async (database_id: string) => {
       date: (task.properties.Date as DatePropertyItemObjectResponse).date
         ?.start,
       title: (
-        task.properties.Name as unknown as TitlePropertyItemObjectResponse
-      ).title.plain_text,
+        (task.properties.Name as unknown as TitlePropertyItemObjectResponse)
+          .title as unknown as RichTextItemResponse[]
+      )[0].plain_text,
       assigned: (
         (
           task.properties[
