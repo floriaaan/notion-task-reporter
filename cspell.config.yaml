@@ -1,0 +1,10 @@
+version: "0.2"
+ignorePaths: []
+dictionaryDefinitions: []
+dictionaries:
+  - fr
+words:
+  - notionhq
+ignoreWords: []
+import: []
+language: en,fr
