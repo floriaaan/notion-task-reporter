@@ -1,3 +1,4 @@
+require("dotenv").config();
 import { isTaskDueThisWeek } from "@/lib/date/currentWeek";
 
 import { getCompletion } from "@/lib/gpt/completion";
@@ -16,9 +17,14 @@ const generateReport = async (databaseId: string) => {
   const prompt = buildPrompt(projects);
   const answer = await getCompletion(prompt);
 
-  const page = await createPage(databaseId, answer);
+  const page = await createPage(
+    process.env.NOTION_OUTPUT_DATABASE_ID as string,
+    answer
+  );
 
   if (page) console.log("Report generated successfully");
 };
 
-generateReport("071ba75b06514b64aeddae1faf0c3bad").catch(console.error);
+generateReport(process.env.NOTION_SOURCE_DATABASE_ID as string).catch(
+  console.error
+);
