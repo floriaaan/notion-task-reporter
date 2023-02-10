@@ -1,5 +1,5 @@
-import { Task } from "../../types/notion";
-import { getWeek } from "./weekOfYear";
+import { Task } from "@/types/notion";
+import { getWeek } from "@/lib/date/weekOfYear";
 
 export const isTaskDueThisWeek = (task: Task) => {
   if (!task.date) return false;

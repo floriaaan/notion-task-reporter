@@ -19,6 +19,7 @@ export const getCompletion = async (prompt: string): Promise<string> => {
   });
   const body = await res.json();
 
+  console.log(body)
   const answers: string[] = [body.choices[0].text];
   // handle choices[0].finish_reason === "length"
   if (body.choices[0].finish_reason !== "length") {

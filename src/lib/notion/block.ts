@@ -8,6 +8,7 @@ import {
   ImageBlockObjectResponse,
   ParagraphBlockObjectResponse,
   QuoteBlockObjectResponse,
+  ToDoBlockObjectResponse,
 } from "@notionhq/client/build/src/api-endpoints";
 import { notion } from "@/lib/notion";
 
@@ -53,10 +54,16 @@ export const getContent = async (block_id: string): Promise<string> => {
           return (child as QuoteBlockObjectResponse).quote.rich_text
             ?.map((e) => e.plain_text)
             .join(" ");
+        case "to_do":
+          return (child as ToDoBlockObjectResponse).to_do.rich_text
+            ?.map((e) => e.plain_text)
+            .join(" ");
         default:
-          return "";
+          return;
       }
     })
-    .join("\n");
+    .filter(Boolean)
+    .join("\n\t* ");
+    
   return childContent;
 };
