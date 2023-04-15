@@ -20,8 +20,10 @@ export const getTasks = async (database_id: string) => {
       project:
         (task.properties["projet"] as SelectPropertyItemObjectResponse).select
           ?.name || "Sans projet",
-      date: (task.properties.Date as DatePropertyItemObjectResponse).date
-        ?.start,
+      date: [
+        (task.properties.Date as DatePropertyItemObjectResponse).date?.start,
+        (task.properties.Date as DatePropertyItemObjectResponse).date?.end,
+      ].filter((d) => d !== undefined && d !== null) as string[],
       title: (
         (task.properties.Name as unknown as TitlePropertyItemObjectResponse)
           .title as unknown as RichTextItemResponse[]
@@ -34,7 +36,7 @@ export const getTasks = async (database_id: string) => {
         ).people as unknown as UserObjectResponse[]
       )
         .map((p) => p.name)
-        .join(", "),
+        .join(", ") || "inconnu",
 
       content: await getContent(task.id),
       status:

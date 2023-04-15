@@ -9,13 +9,14 @@
     "build": "esbuild src/index.ts --bundle --platform=node --target=node18 --outfile=dist/index.js",
     "watch": "esbuild src/index.ts --bundle --platform=node --target=node18 --outfile=dist/index.js --watch",
     "launch": "node --no-warnings dist/index.js",
-    "start": "run-s build launch --print-label"
+    "start": "run-s build \"launch {*}\" --"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@notionhq/client": "^2.2.3",
+    "@tryfabric/martian": "^1.2.4",
     "@types/node": "^18.11.18",
     "dotenv": "^16.0.3",
     "esbuild": "0.17.4",
