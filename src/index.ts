@@ -4,45 +4,73 @@ import { isTaskDueThisWeek } from "@/lib/date/currentWeek";
 import { getCompletion } from "@/lib/gpt/completion";
 import { buildPrompt } from "@/lib/gpt/prompt";
 
-import { createPage } from "@/lib/notion/create";
+import { getBlocks, getRawMarkdown } from "@/lib/string/markdown";
+
 import { getProjectList } from "@/lib/notion/project";
 import { getTasks } from "@/lib/notion/task";
-import { getText } from "@/lib/string/markdown";
+import {
+  exportBlocksToNotion,
+  exportStringToNotion,
+} from "@/lib/notion/export";
+import { header, log, utils } from "@/lib/log";
+import { checkArgs, checkEnv, checkNetworkConnection } from "@/lib/check";
 
 const generateReport = async (databaseId: string, type: "ai" | "markdown") => {
-  console.log("\n" + "Getting tasks from Notion ".padEnd(80, "-"));
+  log.debug(utils.bold(header));
+  
+  try {
+    checkArgs();
+    checkEnv(type);
+    await checkNetworkConnection();
+  } catch (err) {
+    log.error(err);
+    throw "";
+  }
+
+  log.debug(
+    "\n" +
+      utils.magenta(utils.bold("Getting tasks from Notion ")).padEnd(80, "-")
+  );
   const tasks = await getTasks(databaseId);
 
   const tasksDueThisWeek = tasks.filter(isTaskDueThisWeek);
   const projects = getProjectList(tasksDueThisWeek);
-  console.log(
-    `Found ${tasks.length} task(s), ${tasksDueThisWeek.length} due this week and ${projects.length} project(s).`
+  log.debug(
+    `✅ Found ${utils.green(tasks.length.toString())} task(s), ${
+      tasksDueThisWeek.length
+    } due this week in ${projects.length} project(s).`
   );
 
-  let answer = "";
   if (type === "ai") {
-    console.log("\n" + "Generating result by AI".padEnd(80, "-"));
-
-    console.log("Getting completion from GPT-3...");
+    log.debug(
+      "\n" + utils.cyan(utils.bold("Generating result by AI ")).padEnd(80, "-")
+    );
+    log.debug("Getting completion from GPT-3...");
     const prompt = buildPrompt(projects);
-    answer = await getCompletion(prompt);
-    console.log("Completion received.");
+    const answer = (await getCompletion(prompt)) || "";
+    //TODO: handle answer === "" as error
+    log.debug("✅ Completion received.");
+    await exportStringToNotion(answer);
   }
+
   if (type === "markdown") {
-    console.log("\n" + "Generating markdown by concatenation ".padEnd(80, "-"));
-    answer = getText(projects);
+    log.debug(
+      "\n" + utils.cyan(utils.bold("Generating Markdown ")).padEnd(80, "-")
+    );
+    const raw = getRawMarkdown(projects);
+    if (!raw) return;
+    log.debug("✅ Markdown generated.");
+    const blocks = getBlocks(raw);
+    if (!blocks) return;
+    log.debug("✅ Notion Blocks generated.");
+
+    await exportBlocksToNotion(blocks);
   }
-
-  console.log("\n" + "Exporting result in Notion ".padEnd(80, "-"));
-
-  console.log("Creating page in Notion...");
-  const page = await createPage(
-    process.env.NOTION_OUTPUT_DATABASE_ID as string,
-    answer
-  );
-  if (page) console.log("Page created successfully.");
 };
 
-generateReport(process.env.NOTION_SOURCE_DATABASE_ID as string, "markdown").catch(
-  console.error
-);
+generateReport(
+  process.env.NOTION_SOURCE_DATABASE_ID as string,
+  "markdown"
+).catch((e) => {
+  if (e) log.error(e);
+});

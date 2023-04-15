@@ -1,6 +1,6 @@
 export type Task = {
   project?: string;
-  date?: string;
+  date?: string[];
   title?: string;
   assigned?: string;
   content?: string;
