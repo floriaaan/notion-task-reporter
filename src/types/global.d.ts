@@ -1,7 +1,14 @@
-export type global = {
-    verbose: boolean;
-}
+export type ExtendedGlobal = globalThis & {
+  verbose: boolean;
+  type: "ai" | "markdown" | string;
+  help: boolean;
 
-declare global {
-    const verbose: boolean;
-}
+  notion: {
+    token: string;
+    sourceDatabaseId: string;
+    outputDatabaseId: string;
+  };
+  openai: {
+    token: string;
+  };
+};

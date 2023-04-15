@@ -1,37 +1,30 @@
 import "dotenv/config";
-import { isTaskDueThisWeek } from "@/lib/date/currentWeek";
-
-import { getCompletion } from "@/lib/gpt/completion";
-import { buildPrompt } from "@/lib/gpt/prompt";
-
-import { getBlocks, getRawMarkdown } from "@/lib/string/markdown";
-
-import { getProjectList } from "@/lib/notion/project";
-import { getTasks } from "@/lib/notion/task";
-import {
-  exportBlocksToNotion,
-  exportStringToNotion,
-} from "@/lib/notion/export";
+import { ExtendedGlobal } from "@/types/global";
 import { header, log, utils } from "@/lib/log";
 import { checkArgs, checkEnv, checkNetworkConnection } from "@/lib/check";
 
-const generateReport = async (databaseId: string, type: "ai" | "markdown") => {
+import { isTaskDueThisWeek } from "@/lib/date/currentWeek";
+import { getProjectList } from "@/lib/notion/project";
+import { getTasks } from "@/lib/notion/task";
+
+const main = async () => {
   log.debug(utils.bold(header));
-  
   try {
-    checkArgs();
-    checkEnv(type);
+    await checkEnv();
+    await checkArgs();
     await checkNetworkConnection();
   } catch (err) {
     log.error(err);
     throw "";
   }
 
+  const { type, notion } = global as unknown as ExtendedGlobal;
+
   log.debug(
     "\n" +
       utils.magenta(utils.bold("Getting tasks from Notion ")).padEnd(80, "-")
   );
-  const tasks = await getTasks(databaseId);
+  const tasks = await getTasks(notion.sourceDatabaseId);
 
   const tasksDueThisWeek = tasks.filter(isTaskDueThisWeek);
   const projects = getProjectList(tasksDueThisWeek);
@@ -42,6 +35,10 @@ const generateReport = async (databaseId: string, type: "ai" | "markdown") => {
   );
 
   if (type === "ai") {
+    // Lazy load libraries to reduce initial load time
+    const { buildPrompt } = await import("@/lib/gpt/prompt");
+    const { getCompletion } = await import("@/lib/gpt/completion");
+
     log.debug(
       "\n" + utils.cyan(utils.bold("Generating result by AI ")).padEnd(80, "-")
     );
@@ -50,10 +47,15 @@ const generateReport = async (databaseId: string, type: "ai" | "markdown") => {
     const answer = (await getCompletion(prompt)) || "";
     //TODO: handle answer === "" as error
     log.debug("✅ Completion received.");
+
+    const { exportStringToNotion } = await import("@/lib/notion/export");
     await exportStringToNotion(answer);
   }
 
   if (type === "markdown") {
+    // Lazy load libraries to reduce initial load time
+    const { getRawMarkdown, getBlocks } = await import("@/lib/string/markdown");
+
     log.debug(
       "\n" + utils.cyan(utils.bold("Generating Markdown ")).padEnd(80, "-")
     );
@@ -64,13 +66,9 @@ const generateReport = async (databaseId: string, type: "ai" | "markdown") => {
     if (!blocks) return;
     log.debug("✅ Notion Blocks generated.");
 
+    const { exportBlocksToNotion } = await import("@/lib/notion/export");
     await exportBlocksToNotion(blocks);
   }
 };
 
-generateReport(
-  process.env.NOTION_SOURCE_DATABASE_ID as string,
-  "markdown"
-).catch((e) => {
-  if (e) log.error(e);
-});
+main().catch(log.error);
