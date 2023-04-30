@@ -65,6 +65,13 @@ jobs:
         with:
           name: build-${{ github.sha }}
           path: dist/index.js
+      - uses: actions/checkout@master
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+      - name: Install dependencies
+        run: npm install
       - name: Package into node binary
         id: pkg
         uses: lando/pkg-action@v2
