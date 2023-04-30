@@ -85,6 +85,6 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           # This should be the path to the assets binary on the runner (bin/notion-task-reporter-linux-x64 or bin/notion-task-reporter-macos-arm64 or bin/notion-task-reporter-win-x64.exe)
-          asset_path: /bin/*
+          asset_path: bin/*
           asset_name: notion-task-reporter
           asset_content_type: application/octet-stream
