@@ -49,23 +49,13 @@ jobs:
     # depends on build to get the artifact
     needs: build
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        arch:
-          - x64
-          - arm64
-        node-version:
-          - node18
-        os:
-          - linux
-          - macos
-          - win
+
     steps:
       - uses: actions/download-artifact@v3
         id: download-artifact
         with:
           name: build-${{ github.sha }}
-          path: ${{ github.workspace }}/dist
+          path: /dist/index.js
       - uses: actions/checkout@master
       - name: Setup node
         uses: actions/setup-node@v3
@@ -73,14 +63,11 @@ jobs:
           node-version: 18.x
       - name: Install dependencies
         run: npm install
-      - name: Package into node binary
+      - name: Package using pkg
         id: pkg
-        uses: lando/pkg-action@v2
-        with:
-          entrypoint: dist/index.js
-          arch: ${{ matrix.arch }}
-          node-version: ${{ matrix.node-version }}
-          os: ${{ matrix.os }}
+        run: npm run pkg
+
+
       - name: Create GitHub release
         id: create_release
         uses: actions/create-release@v1
@@ -97,6 +84,6 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           # This should be the path to the assets binary on the runner (bin/notion-task-reporter-linux-x64 or bin/notion-task-reporter-macos-arm64 or bin/notion-task-reporter-win-x64.exe)
-          asset_path: ${{steps.pkg.outputs.file}}
-          asset_name: notion-task-reporter-${{ matrix.os }}-${{ matrix.arch }}
+          asset_path: /bin/*
+          asset_name: notion-task-reporter
           asset_content_type: application/octet-stream
