@@ -72,23 +72,15 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            console.log('environment', process.versions);
-
-            const fs = require('fs').promises;
-
             const { repo: { owner, repo }, sha } = context;
-            console.log({ owner, repo, sha });
+            const fs = require('fs').promises;
 
             const release = await github.rest.repos.createRelease({
               owner, repo,
-              tag_name: process.env.GITHUB_REF,
+              tag_name: `nightly-${sha.slice(0, 7)}`,
             });
 
-            console.log('created release', { release });
-
             const binaries = await fs.readdir('./bin');
-            console.log('binaries', binaries);
-
             for (let file of binaries) {
               console.log('uploading', file);
 
