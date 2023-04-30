@@ -1,4 +1,4 @@
-name: Func Tests
+name: Notion TR - test, build, package
 
 on:
   push:
@@ -46,6 +46,8 @@ jobs:
           retention-days: 1
 
   package:
+    # depends on build to get the artifact
+    needs: build
     runs-on: ubuntu-latest
     strategy:
       matrix:
