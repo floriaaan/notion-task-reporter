@@ -49,7 +49,9 @@
     "targets": [
       "latest-macos-arm64",
       "latest-win-x64",
-      "latest-linux-x64"
+      "latest-win-arm64",
+      "latest-linux-x64",
+      "latest-linux-arm64"
     ],
     "outputPath": "bin/"
   }
