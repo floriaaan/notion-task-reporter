@@ -59,6 +59,33 @@
 
 [![Product Name Screen Shot][product-screenshot]](https://github.com/floriaaan/notion-task-reporter)
 
+NotionTR (Notion Task Reporter) is an utility that easily allows you to generate a reporting of your tasks in Notion.
+
+The project was created to help me generate a weekly report of my tasks in Notion, but it can be used for any other purpose.
+It can be used with any Notion input database, as long as it has the [following properties](./src/lib/notion/task.ts):
+
+- a `name` property: a text property with the name of the task,
+- a `assigné` property: a multi-select property with the users assigned to the task,
+- a `date` property: a date property with the date of the task (from-to supported),
+- a `projet` property: a select property with the project of the task (used to group tasks by project),
+- a `état` property: a select property with the status of the task (used to filter tasks by status),
+- a content: the content of the task (**optional**, used to describe the task).
+
+We will provide a template database in the future, and a way to customize the properties.
+
+---
+
+### Features
+
+NotionTR is a CLI tool, designed to be used with a cron job.
+It can generate a report in two formats:
+
+- markdown (returns Notion blocks),
+<!-- - html (returns a html file, NOT RIGHT NOW BUT WHY NOT). -->
+- ai (with OpenAI's autocomplete, returns Notion paragraph).
+
+---
+
 ### Built With
 
 - [![Typescript][typescript]][ts-url]
@@ -73,7 +100,6 @@
 
 This is an example of how you may give instructions on setting up your project locally.
 To get a local copy up and running follow these simple example steps.
-
 
 ### Installation
 
@@ -107,11 +133,10 @@ To get a local copy up and running follow these simple example steps.
 
 ## Roadmap
 
-- [] Add complete support for environments variables as arguments
-- [] Add support for multiple databases in input
-- [] Add workflow to build and release binaries for all platforms
-- [] Add support for other output formats (JSON, CSV, etc.)
-
+- [ ] Add complete support for environments variables as arguments
+- [ ] Add support for multiple databases in input
+- [ ] Add workflow to build and release binaries for all platforms
+- [ ] Add support for other output formats (JSON, CSV, etc.)
 
 See the [open issues](https://github.com/floriaaan/notion-task-reporter/issues) for a full list of proposed features (and known issues).
 

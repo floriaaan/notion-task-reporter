@@ -1,0 +1,92 @@
+name: Func Tests
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 7
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "18.x"
+          cache: "pnpm"
+          cache-dependency-path: pnpm-lock.yaml
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Test
+        run: pnpm test
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 7
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "18.x"
+          cache: "pnpm"
+          cache-dependency-path: pnpm-lock.yaml
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Build
+        run: pnpm build
+      - uses: actions/upload-artifact@v3
+        with:
+          name: build-${{ github.sha }}
+          path: dist/index.js
+          retention-days: 1
+
+  package:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch:
+          - x64
+          - arm64
+        node-version:
+          - node18
+        os:
+          - linux
+          - macos
+          - win
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: build-${{ github.sha }}
+          path: dist/index.js
+      - name: Package into node binary
+        id: pkg
+        uses: lando/pkg-action@v2
+        with:
+          entrypoint: dist/index.js
+          arch: ${{ matrix.arch }}
+          node-version: ${{ matrix.node-version }}
+          os: ${{ matrix.os }}
+      - name: Create GitHub release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.run_number }}
+          release_name: Release ${{ github.run_number }}
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          # This should be the path to the assets binary on the runner (bin/notion-task-reporter-linux-x64 or bin/notion-task-reporter-macos-arm64 or bin/notion-task-reporter-win-x64.exe)
+          asset_path: ${{steps.pkg.outputs.file}}
+          asset_name: notion-task-reporter-${{ matrix.os }}-${{ matrix.arch }}
+          asset_content_type: application/octet-stream

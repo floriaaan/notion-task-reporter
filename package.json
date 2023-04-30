@@ -1,11 +1,12 @@
 {
-  "name": "notion-reporting",
+  "name": "notion-task-reporter",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
   "bin": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest",
+    "coverage": "vitest --coverage",
     "lint": "eslint .",
     "build": "esbuild src/index.ts --bundle --platform=node --target=node18 --outfile=dist/index.js",
     "watch": "esbuild src/index.ts --bundle --platform=node --target=node18 --outfile=dist/index.js --watch",
@@ -47,7 +48,8 @@
     ],
     "targets": [
       "latest-macos-arm64",
-      "latest-win-x64"
+      "latest-win-x64",
+      "latest-linux-x64"
     ],
     "outputPath": "bin/"
   }
