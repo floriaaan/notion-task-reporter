@@ -1,4 +1,8 @@
-import "dotenv/config";
+import path from "path";
+const dotenv_absolutePath = path.join(__dirname, '../.env');
+import dotenv from "dotenv";
+dotenv.config({ path: dotenv_absolutePath });
+
 import { ExtendedGlobal } from "@/types/global";
 import { header, log, utils } from "@/lib/log";
 import { checkArgs, checkEnv, checkNetworkConnection } from "@/lib/check";
