@@ -68,7 +68,7 @@ jobs:
         id: pkg
         run: pnpm run pkg
       - name: Create Release
-        uses: actions/github-script@v2
+        uses: actions/github-script@v6
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
@@ -88,14 +88,17 @@ jobs:
       
             console.log('created release', { release });
         
-            for (let file of await fs.readdir('./bin')) {
+            const binaries = await fs.readdir('./bin');
+            console.log('binaries', binaries);
+
+            for (let file of binaries) {
               console.log('uploading', file);
       
               await github.repos.uploadReleaseAsset({
                 owner, repo,
                 release_id: release.data.id,
                 name: file,
-                data: await fs.readFile(`./${file}`)
+                data: await fs.readFile(`./bin/${file}`)
               });            
             }
     
