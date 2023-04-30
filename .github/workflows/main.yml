@@ -55,7 +55,7 @@ jobs:
         id: download-artifact
         with:
           name: build-${{ github.sha }}
-          path: /dist/index.js
+          path: dist/index.js
       - uses: actions/checkout@master
       - name: Setup node
         uses: actions/setup-node@v3
