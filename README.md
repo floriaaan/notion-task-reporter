@@ -1,44 +1,166 @@
-# Notion Task Reporting
+<div id="top"></div>
 
-This project generates reports on task completion for a team using Notion. The report is generated based on data from a Notion database that tracks tasks performed by the team on different projects.
-It can also generate a report without OpenAI GPT-3, but the report will be only a reflection of the data in the database.
+<p class="not-prose inline-flex items-center gap-x-2 w-full justify-center" align="center">
+  <a href="https://github.com/floriaaan/notion-task-reporter/graphs/contributors"><img src="https://img.shields.io/github/contributors/floriaaan/notion-task-reporter.svg" alt="Contributors"></a>
+  <a href="https://github.com/floriaaan/notion-task-reporter/network/members"><img src="https://img.shields.io/github/forks/floriaaan/notion-task-reporter.svg" alt="Forks"></a>
+  <a href="https://github.com/floriaaan/notion-task-reporter/stargazers"><img src="https://img.shields.io/github/stars/floriaaan/notion-task-reporter.svg" alt="Stargazers"></a>
+  <a href="https://github.com/floriaaan/notion-task-reporter/issues"><img src="https://img.shields.io/github/issues/floriaaan/notion-task-reporter.svg" alt="Issues"></a>
+  <a href="https://github.com/floriaaan/notion-task-reporter/blob/master/LICENSE"><img src="https://img.shields.io/github/license/floriaaan/notion-task-reporter.svg" alt="MIT License"></a>
+  <a href="https://github.com/floriaaan/notion-task-reporter/"><img src="https://codecov.io/gh/floriaaan/notion-task-reporter/branch/develop/graph/badge.svg?token=140LKRPY5O" alt="Code coverage"></a>
 
-## Requirements
+</p>
 
-- Node.js (at least `v18`, need fetch API support)
-- Notion API key
-- OpenAI GPT API key (!optional with `markdown` report)
+<!-- PROJECT LOGO -->
+<br />
+<div align="center">
+  <a href="https://github.com/floriaaan/notion-task-reporter">
+    <img src="./docs/images/logo_wide.png" alt="Logo" width="434" height="152">
+  </a>
+  <p align="center">
+    NotionTR (Notion Task Reporter) is an utility that easily allows you to generate a reporting of your tasks in Notion.
+    <br />
+    <a href="https://github.com/floriaaan/notion-task-reporter"><strong>Explore the docs »</strong></a>
+    <br />
+    <br />
+    <!-- <a href="https://github.com/floriaaan/notion-task-reporter">View Demo</a>
+    · -->
+    <a href="https://github.com/floriaaan/notion-task-reporter/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/floriaaan/notion-task-reporter/issues">Request Feature</a>
+  </p>
+</div>
 
-## Features
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+      <ul>
+        <li><a href="#built-with">Built With</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#installation">Installation</a></li>
+      </ul>
+    </li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#contributing">Contributing</a></li>
+    <li><a href="#license">License</a></li>
+  </ol>
+</details>
 
-- Retrieve tasks from Notion database using the Notion API (`src/lib/notion/task.ts`).
-- Filter tasks by (isTaskDueThisWeek in `src/lib/date/currentWeek.ts`).
-- Group tasks by project based on a project property (`src/lib/notion/project.ts`).
+<!-- ABOUT THE PROJECT -->
 
-- A generic function to retrieve the content of a Notion page, including all children of different types (`src/lib/notion/block.ts`).
+## About The Project
 
-### via OpenAI GPT-3
+[![Product Name Screen Shot][product-screenshot]](https://github.com/floriaaan/notion-task-reporter)
 
-- Automatically generate a prompt via tasks (`src/lib/gpt/prompt.ts`).
-- Generate a response to the prompt via GPT-3 (`src/lib/gpt/completion.ts`).
+### Built With
 
-### via markdown
+- [![Typescript][typescript]][ts-url]
+- [![Node.js][nodejs]][nodejs-url]
+- [![Notion][notion]][notion-url]
 
-- Generate a markdown report based on tasks (`src/lib/string/markdown.ts`).
+<p align="right">(<a href="#top">back to top</a>)</p>
 
-### via Notion API
+<!-- GETTING STARTED -->
 
-- Split the generated response into chunks of 2000-length chars due to Notion limitation (`src/lib/string/chunk.ts`).
-- Create a new Notion page with the generated response (`src/lib/notion/page.ts`).
+## Getting Started
 
-## Usage
+This is an example of how you may give instructions on setting up your project locally.
+To get a local copy up and running follow these simple example steps.
 
-1. Clone the repository
-2. Install dependencies by running `npm install` or `pnpm install`.
-3. Create a `.env` (following `.env.example` keys) file in the root directory and specify your Notion API key and (input and output) database ID and OpenAI GPT API key.
-4. Select the report type in `src/index.ts` (either `markdown` or `ai`).
-5. Run `npm run start` (`pnpm start`) to generate the report.
 
-## Contributions
+### Installation
 
-Feel free to contribute to the project by opening a pull request.
+1. Clone the repo
+   ```sh
+   git clone https://github.com/floriaaan/notion-task-reporter.git
+   ```
+2. Install NPM packages
+
+   ```sh
+   npm install # yarn install, pnpm install
+   ```
+
+3. Provide your environnement variables (optional if passing them as arguments)
+
+   ```sh
+   cp .env.example .env
+   ```
+
+   Then fill the `.env` file with your Notion API Token and input/output database ids.
+
+### Usage
+
+- Launch NotionTR : `pnpm start`
+- Launch NotionTR with arguments : `pnpm start --type=(ai|markdown)`
+- Show supported parameters : `pnpm start --help`
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+<!-- ROADMAP -->
+
+## Roadmap
+
+- [] Add complete support for environments variables as arguments
+- [] Add support for multiple databases in input
+- [] Add workflow to build and release binaries for all platforms
+- [] Add support for other output formats (JSON, CSV, etc.)
+
+
+See the [open issues](https://github.com/floriaaan/notion-task-reporter/issues) for a full list of proposed features (and known issues).
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+<!-- CONTRIBUTING -->
+
+## Contributing
+
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
+Don't forget to give the project a star! Thanks again!
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/amazing-feature`)
+3. Commit your Changes (`git commit -m 'feat: add amazing feature'`)
+4. Push to the Branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+<!-- LICENSE -->
+
+## License
+
+Currently, this project has no license. Feel free to use it as you want.
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+<!-- MARKDOWN LINKS & IMAGES -->
+<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+
+[contributors-shield]: https://img.shields.io/github/contributors/floriaaan/notion-task-reporter.svg
+[contributors-url]: https://github.com/floriaaan/notion-task-reporter/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/floriaaan/notion-task-reporter.svg
+[forks-url]: https://github.com/floriaaan/notion-task-reporter/network/members
+[stars-shield]: https://img.shields.io/github/stars/floriaaan/notion-task-reporter.svg
+[stars-url]: https://github.com/floriaaan/notion-task-reporter/stargazers
+[issues-shield]: https://img.shields.io/github/issues/floriaaan/notion-task-reporter.svg
+[issues-url]: https://github.com/floriaaan/notion-task-reporter/issues
+[license-shield]: https://img.shields.io/github/license/floriaaan/notion-task-reporter.svg
+[license-url]: https://github.com/floriaaan/notion-task-reporter/blob/master/LICENSE
+[coverage-shield]: https://codecov.io/gh/floriaaan/notion-task-reporter/branch/develop/graph/badge.svg?token=140LKRPY5O
+[coverage-url]: https://github.com/floriaaan/notion-task-reporter/
+[product-screenshot]: ./docs/images/screenshot.png
+[notion]: https://img.shields.io/badge/Notion-000000?logo=notion&logoColor=white
+[typescript]: https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white
+[nodejs]: https://img.shields.io/badge/Node.js-339933?logo=node.js&logoColor=white
+[ts-url]: https://www.typescriptlang.org/
+[nodejs-url]: https://nodejs.org/en/
+[notion-url]: https://www.notion.so/
