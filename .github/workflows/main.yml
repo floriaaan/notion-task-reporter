@@ -39,33 +39,34 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Build
         run: pnpm build
-      - uses: actions/upload-artifact@v3
-        with:
-          name: build-${{ github.sha }}
-          path: dist/index.js
-          retention-days: 1
+    #   - uses: actions/upload-artifact@v3
+    #     with:
+    #       name: build-${{ github.sha }}
+    #       path: dist/index.js
+    #       retention-days: 1
 
   package:
-    # depends on build to get the artifact
-    needs: build
+    # depends on build to get the artifact - DISABLED
+    needs: build 
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/download-artifact@v3
-        id: download-artifact
-        with:
-          name: build-${{ github.sha }}
-          path: dist/index.js
       - uses: actions/checkout@master
-      - name: Setup node
-        uses: actions/setup-node@v3
+      - uses: pnpm/action-setup@v2
         with:
-          node-version: 18.x
+          version: 7
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "18.x"
+          cache: "pnpm"
+          cache-dependency-path: pnpm-lock.yaml
       - name: Install dependencies
-        run: npm install
+        run: pnpm install --frozen-lockfile
+      - name: Build
+        run: pnpm build
       - name: Package using pkg
         id: pkg
-        run: npm run pkg
+        run: pnpm run pkg
 
 
       - name: Create GitHub release
